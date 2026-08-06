@@ -23,8 +23,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from nexus_terminal import __version__
 from nexus_terminal.i18n import get_messages
 from nexus_terminal.config import ConfigManager
-from nexus_terminal.cloudflared import check_cloudflared, run_tunnel
-from nexus_terminal.wizard import run_wizard, list_custom_commands, RESERVED_PREFIXES
+from nexus_terminal.cloudflared import (
+    check_cloudflared, run_tunnel, ensure_cloudflared,
+    download_and_extract_cf, install_cf,
+)
+from nexus_terminal.wizard import (
+    run_wizard, list_custom_commands,
+    remove_custom_command, remove_custom_command_interactive,
+)
+from nexus_terminal.network import get_network_info, format_network_info
+from nexus_terminal.ports import get_listening_ports, format_ports
 
 
 def print_help(messages):
@@ -35,8 +43,13 @@ def print_help(messages):
     print(messages['help_u'])
     print(messages['help_v6'])
     print(messages['help_url'])
+    print(messages['help_server'])
     print(messages['help_c'])
     print(messages['help_ls'])
+    print(messages['help_rm'])
+    print(messages['help_install'])
+    print(messages['help_ip'])
+    print(messages['help_ports'])
     print(messages['help_help'])
     print(messages['help_version'])
     print(messages['help_custom'])
@@ -44,15 +57,28 @@ def print_help(messages):
 
 
 def check_and_run_tunnel(url, messages):
-    """Check cloudflared availability and run tunnel with the given URL."""
+    """Check cloudflared availability and run tunnel with the given URL.
+
+    If cloudflared is not found, prompts the user to download and install
+    it automatically. After successful installation, re-executes the tunnel.
+    """
     config = ConfigManager()
     cf_path = config.get('cloudflared_path')
-    if not check_cloudflared(cf_path):
-        print(messages['cloudflared_not_found'])
+
+    if check_cloudflared(cf_path):
+        # Already available — run tunnel directly
+        return run_tunnel(url, cf_path, messages)
+
+    # Not available — try to download and install
+    if not ensure_cloudflared(cf_path, messages):
         print(messages['cloudflared_hint'])
         print(messages['cloudflared_url'])
         print(messages['cloudflared_path_hint'])
         return 1
+
+    # Just installed — re-execute the tunnel
+    if messages:
+        print(messages['cf_re_executing'])
     return run_tunnel(url, cf_path, messages)
 
 
@@ -102,11 +128,79 @@ def handle_tunnel_url(args, messages):
     return check_and_run_tunnel(args[0], messages)
 
 
+def handle_server(args, messages):
+    """Handle: nt server [-http] <port>
+
+    Starts a simple HTTP file server (python http.server) on the given port,
+    serving the current working directory.
+    """
+    import errno
+    import http.server
+
+    port_str = None
+    for arg in args:
+        if arg == '-http':
+            continue  # Explicit HTTP flag (default, reserved for future protocols)
+        elif not arg.startswith('-') and port_str is None:
+            port_str = arg
+        else:
+            print(messages['unknown_arg'].format(arg))
+            return 1
+
+    if port_str is None:
+        print(messages['server_port_missing'])
+        return 1
+
+    try:
+        port = int(port_str)
+    except ValueError:
+        print(messages['port_invalid'])
+        return 1
+
+    if not (1 <= port <= 65535):
+        print(messages['port_invalid'])
+        return 1
+
+    cwd = os.getcwd()
+
+    print()
+    print(messages['server_running'])
+    print(f'  {messages["server_port_label"]}: {port}')
+    print(f'  {messages["server_directory"]}: {cwd}')
+    print(f'  URL: http://localhost:{port}')
+    print(messages['server_stop_hint'])
+
+    handler = http.server.SimpleHTTPRequestHandler
+
+    try:
+        with http.server.ThreadingHTTPServer(('', port), handler) as httpd:
+            httpd.serve_forever()
+    except KeyboardInterrupt:
+        print(messages['server_stopped'])
+    except OSError as e:
+        if e.errno == errno.EADDRINUSE:
+            print(messages['server_port_in_use'].format(port))
+        elif e.errno == errno.EACCES:
+            print(messages['server_port_denied'].format(port))
+        else:
+            print(messages['server_error'].format(e))
+        return 1
+
+    return 0
+
+
 def handle_custom(args, messages):
-    """Handle: nt c [-ls]"""
+    """Handle: nt c [-ls] [-rm <prefix>]"""
     if '-ls' in args:
         list_custom_commands(messages)
         return 0
+
+    if '-rm' in args:
+        idx = args.index('-rm')
+        if idx + 1 < len(args):
+            return remove_custom_command(args[idx + 1], messages)
+        return remove_custom_command_interactive(messages)
+
     for arg in args:
         if arg.startswith('-'):
             print(messages['unknown_arg'].format(arg))
@@ -115,35 +209,44 @@ def handle_custom(args, messages):
     return 0
 
 
-def try_custom_command(messages):
-    """Check if the first argument is a custom command invocation (--<prefix>).
+def handle_install(args, messages):
+    """Handle: nt install cf (or nt install u)"""
+    if not args or args[0].lower() not in ('cf', 'u'):
+        print(messages['install_usage'])
+        return 1
 
-    Returns True if handled (found or errored), False if not a custom command attempt.
-    """
-    if len(sys.argv) < 2:
-        return False
+    print(messages['install_starting'])
 
-    first_arg = sys.argv[1]
-    if not first_arg.startswith('--') or len(first_arg) <= 2:
-        return False
-
-    prefix = first_arg[2:]
-    if prefix in RESERVED_PREFIXES:
-        return False
-
-    config = ConfigManager()
-    custom = config.get_custom_command(prefix)
-    if not custom:
-        print(messages['custom_not_found'].format(prefix))
-        sys.exit(1)
-
-    cmd = custom['command'] if isinstance(custom, dict) else str(custom)
-    print(messages['custom_executing'].format(cmd), flush=True)
     try:
-        subprocess.run(cmd, shell=True)
-    except KeyboardInterrupt:
-        print(messages['custom_interrupted'])
-    return True
+        exe_path = download_and_extract_cf(messages)
+        if install_cf(exe_path, messages):
+            print(messages['install_success'])
+            return 0
+        print(messages['install_failed'])
+        return 1
+    except Exception as e:
+        print(messages['cf_download_failed'].format(e))
+        return 1
+
+
+def handle_ip(messages):
+    """Handle: nt ip — show local IP addresses."""
+    info = get_network_info()
+    lines = format_network_info(info, messages)
+    print()
+    for line in lines:
+        print(line)
+    return 0
+
+
+def handle_ports(messages):
+    """Handle: nt ports — list all listening ports."""
+    ports = get_listening_ports()
+    print()
+    print(messages['ports_header'])
+    for line in format_ports(ports, messages):
+        print(line)
+    return 0
 
 
 def main():
@@ -154,13 +257,11 @@ def main():
         print_help(messages)
         return 0
 
-    # Custom command: nt --<prefix>
-    if try_custom_command(messages):
-        return 0
-
-    mode = sys.argv[1].lower()
+    first_arg = sys.argv[1]
+    mode = first_arg.lower()
     args = sys.argv[2:]
 
+    # Built-in modes (case-insensitive)
     if mode in ('help', 'h'):
         print_help(messages)
         return 0
@@ -175,11 +276,43 @@ def main():
     if mode == 'url':
         return handle_tunnel_url(args, messages)
 
+    if mode in ('server', 's'):
+        return handle_server(args, messages)
+
     if mode == 'c':
         return handle_custom(args, messages)
 
+    if mode == 'install':
+        return handle_install(args, messages)
+
+    if mode == 'ip':
+        return handle_ip(messages)
+
+    if mode == 'ports':
+        return handle_ports(messages)
+
+    # Not a built-in — try custom command (case-insensitive match)
+    # Strip leading -- for backward compat
+    lookup = first_arg[2:] if first_arg.startswith('--') and len(first_arg) > 2 else first_arg
+
+    config = ConfigManager()
+    custom = None
+    for prefix, data in config.get_all_custom_commands().items():
+        if prefix.lower() == lookup.lower():
+            custom = data
+            break
+
+    if custom:
+        cmd = custom['command'] if isinstance(custom, dict) else str(custom)
+        print(messages['custom_executing'].format(cmd), flush=True)
+        try:
+            subprocess.run(cmd, shell=True)
+        except KeyboardInterrupt:
+            print(messages['custom_interrupted'])
+        return 0
+
     # Unknown mode
-    print(messages['unknown_mode'].format(sys.argv[1]))
+    print(messages['unknown_mode'].format(first_arg))
     return 1
 
 

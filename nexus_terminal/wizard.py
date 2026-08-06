@@ -5,7 +5,7 @@ import re
 from .config import ConfigManager
 
 # Prefixes reserved for built-in commands (used with -- prefix)
-RESERVED_PREFIXES = {'help', 'url', 'version', 'u', 'c'}
+RESERVED_PREFIXES = {'help', 'url', 'version', 'u', 'c', 'install', 'ip', 'server', 's', 'ports'}
 
 # Valid prefix pattern: letters, numbers, hyphens, underscores
 PREFIX_PATTERN = re.compile(r'^[a-zA-Z0-9_-]+$')
@@ -72,4 +72,27 @@ def list_custom_commands(messages):
 
         # Show description if available, otherwise show the command itself
         display = desc if desc else cmd
-        print(f'  --{prefix:<16} {display}')
+        print(f'  {prefix:<18} {display}')
+
+
+def remove_custom_command(prefix, messages):
+    """Remove a custom command by prefix (non-interactive).
+
+    Returns 0 on success, 1 if not found.
+    """
+    config = ConfigManager()
+    if not config.get_custom_command(prefix):
+        print(messages['wizard_rm_not_found'].format(prefix))
+        return 1
+    config.remove_custom_command(prefix)
+    print(messages['wizard_rm_success'].format(prefix))
+    return 0
+
+
+def remove_custom_command_interactive(messages):
+    """Interactive prompt to remove a custom command. Returns exit code."""
+    prefix = input(messages['wizard_rm_prompt']).strip()
+    if not prefix:
+        print(messages['wizard_rm_empty'])
+        return 1
+    return remove_custom_command(prefix, messages)

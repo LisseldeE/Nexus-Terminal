@@ -73,3 +73,15 @@ class ConfigManager:
     def get_all_custom_commands(self):
         """Return all custom commands dict."""
         return self.config.get('custom_commands', {})
+
+    def remove_custom_command(self, prefix):
+        """Remove a custom command by prefix.
+
+        Returns True if removed, False if not found.
+        """
+        commands = self.config.get('custom_commands', {})
+        if prefix in commands:
+            del commands[prefix]
+            self.save()
+            return True
+        return False
