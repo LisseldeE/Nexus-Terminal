@@ -34,6 +34,7 @@ from nexus_terminal.wizard import (
 from nexus_terminal.network import get_network_info, format_network_info
 from nexus_terminal.ports import get_listening_ports, format_ports
 from nexus_terminal.kill import kill_process_by_port, kill_interactive
+from nexus_terminal.downloader import download_file
 
 
 def print_help(messages):
@@ -52,6 +53,7 @@ def print_help(messages):
     print(messages['help_ip'])
     print(messages['help_ports'])
     print(messages['help_kill'])
+    print(messages['help_download'])
     print(messages['help_help'])
     print(messages['help_version'])
     print(messages['help_custom'])
@@ -281,6 +283,22 @@ def handle_kill(args, messages):
     return kill_interactive(messages)
 
 
+def handle_download(args, messages):
+    """Handle: nt download <url>
+
+    Multi-threaded download of a file from the given URL.
+    Saves to the current working directory.
+    """
+    if not args:
+        print(messages['download_missing_url'])
+        print(messages['download_usage'])
+        return 1
+
+    url = args[0]
+    result = download_file(url, messages=messages)
+    return 0 if result else 1
+
+
 def main():
     messages = get_messages()
 
@@ -341,6 +359,9 @@ def main():
 
     if mode == 'kill':
         return handle_kill(args, messages)
+
+    if mode == 'download':
+        return handle_download(args, messages)
 
     # Not a built-in — try custom command (case-insensitive match)
     # Strip leading -- for backward compat

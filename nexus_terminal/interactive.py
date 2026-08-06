@@ -113,15 +113,15 @@ def select_option(title, subtitle, options, messages):
         key = _get_key()
 
         if key == KEY_ENTER:
-            sys.stdout.write('\033[J\n')
+            sys.stdout.write(f'\033[{last_lines}A\r\033[J')
             return options[selected][0] if options else None
 
         elif key == KEY_CTRL_C:
-            sys.stdout.write('\033[J')
+            sys.stdout.write(f'\033[{last_lines}A\r\033[J')
             raise InteractiveExit()
 
         elif key == KEY_ESC:
-            sys.stdout.write('\033[J\n')
+            sys.stdout.write(f'\033[{last_lines}A\r\033[J')
             return None
 
         elif key == KEY_UP:
@@ -178,16 +178,16 @@ def prompt_input(label, messages):
 
         if key == KEY_ENTER:
             if query.strip():
-                sys.stdout.write('\033[J\n')
+                sys.stdout.write(f'\033[{last_lines}A\r\033[J')
                 return query.strip()
             continue  # Empty — keep waiting
 
         elif key == KEY_CTRL_C:
-            sys.stdout.write('\033[J')
+            sys.stdout.write(f'\033[{last_lines}A\r\033[J')
             raise InteractiveExit()
 
         elif key == KEY_ESC:
-            sys.stdout.write('\033[J\n')
+            sys.stdout.write(f'\033[{last_lines}A\r\033[J')
             return None
 
         elif key == KEY_BACKSPACE:
@@ -211,6 +211,7 @@ def _build_main_options(custom_commands, messages):
         ('ip', messages['cmd_desc_ip']),
         ('ports', messages['cmd_desc_ports']),
         ('kill', messages['cmd_desc_kill']),
+        ('download', messages['cmd_desc_download']),
         ('version', messages['cmd_desc_version']),
     ]
     options.append(('custom', messages['cmd_desc_custom']))
@@ -312,6 +313,14 @@ def _handle_install(messages):
     return f'install {target}'
 
 
+def _handle_download(messages):
+    """Download sub-flow: input URL → return command string."""
+    url = prompt_input('URL:', messages)
+    if url is None:
+        return None
+    return f'download {url}'
+
+
 def run_interactive(version, custom_commands, messages):
     """Run the interactive command selector.
 
@@ -340,7 +349,7 @@ def run_interactive(version, custom_commands, messages):
 
     # Custom commands — execute directly
     simple_commands = {'url', 'server', 'custom', 'install',
-                       'ip', 'ports', 'kill', 'help', 'version', 'exit'}
+                       'ip', 'ports', 'kill', 'download', 'help', 'version', 'exit'}
     if choice not in simple_commands:
         return choice
 
@@ -355,6 +364,8 @@ def run_interactive(version, custom_commands, messages):
         return _handle_custom(custom_commands, messages)
     if choice == 'install':
         return _handle_install(messages)
+    if choice == 'download':
+        return _handle_download(messages)
 
     # Simple commands (ip, ports, help, version) — execute directly
     return choice

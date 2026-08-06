@@ -15,6 +15,7 @@
 | `nt ip` | 显示本机 IP 地址 |
 | `nt ports` | 列出监听中的端口 |
 | `nt kill [port]` | 终止占用端口的进程（无参进入交互选择） |
+| `nt download <url>` | 多线程下载文件到当前目录 |
 | `nt <前缀>` | 执行自定义命令 |
 | `nt help` | 显示帮助信息 |
 | `nt version` | 显示版本信息 |
@@ -72,7 +73,7 @@ nt mytunnel             # 执行自定义命令
 }
 ```
 
-保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill`
+保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download`
 
 ---
 
@@ -95,6 +96,7 @@ A lightweight Python CLI tool for Cloudflare tunnels and custom command mapping.
 | `nt ip` | Show local IP addresses |
 | `nt ports` | List listening ports |
 | `nt kill [port]` | Kill process by port (no arg = interactive) |
+| `nt download <url>` | Multi-threaded download to current directory |
 | `nt <prefix>` | Execute a custom command |
 | `nt help` | Show help |
 | `nt version` | Show version |
@@ -152,4 +154,4 @@ Path: `~/.nexusterminal/config.json`
 }
 ```
 
-Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill`
+Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download`
