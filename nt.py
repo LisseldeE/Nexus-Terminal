@@ -318,6 +318,7 @@ def main():
 
     if mode in ('version', 'v'):
         print(messages['version_info'].format(__version__))
+        print(messages['copyright'])
         return 0
 
     if mode in ('u', 'url'):
