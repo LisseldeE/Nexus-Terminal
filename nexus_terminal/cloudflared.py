@@ -1,6 +1,7 @@
 """Cloudflared detection, download, installation, and tunnel runner."""
 
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -25,6 +26,28 @@ def check_cloudflared(cloudflared_path=None):
     if cloudflared_path and os.path.isfile(cloudflared_path):
         return True
     return shutil.which('cloudflared') is not None
+
+
+def get_cloudflared_version(binary='cloudflared'):
+    """Get cloudflared version string.
+
+    Returns the version (e.g. '2024.7.3') or None if it cannot be determined.
+    """
+    try:
+        result = subprocess.run(
+            [binary, 'version'],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        output = (result.stdout or '') + (result.stderr or '')
+        # cloudflared version output formats vary, e.g.:
+        #   "cloudflared version 2024.7.3"
+        #   "INF Version 2024.7.3"
+        match = re.search(r'(\d+\.\d+\.\d+)', output)
+        return match.group(1) if match else None
+    except Exception:
+        return None
 
 
 def run_tunnel(url, cloudflared_path=None, messages=None):

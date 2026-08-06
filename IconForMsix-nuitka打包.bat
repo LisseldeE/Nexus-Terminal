@@ -1,0 +1,3 @@
+@echo off
+python -u -m nuitka --standalone --onefile --windows-console-mode=force --noinclude-pytest-mode=nofollow --noinclude-setuptools-mode=nofollow --noinclude-unittest-mode=nofollow --output-dir=".\dist" --windows-icon-from-ico="icon.ico" --product-name="Nexus Terminal.py" --product-version="1.1.0.0" --file-version="1.1.0.0" --copyright="Copyright (c) 2026 Lisselde_E. All rights reserved" --remove-output --show-progress --show-memory --jobs=4 --zig "NT.py"
+pause
