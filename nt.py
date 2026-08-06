@@ -33,6 +33,7 @@ from nexus_terminal.wizard import (
 )
 from nexus_terminal.network import get_network_info, format_network_info
 from nexus_terminal.ports import get_listening_ports, format_ports
+from nexus_terminal.kill import kill_process_by_port, kill_interactive
 
 
 def print_help(messages):
@@ -50,6 +51,7 @@ def print_help(messages):
     print(messages['help_install'])
     print(messages['help_ip'])
     print(messages['help_ports'])
+    print(messages['help_kill'])
     print(messages['help_help'])
     print(messages['help_version'])
     print(messages['help_custom'])
@@ -82,28 +84,37 @@ def check_and_run_tunnel(url, messages):
     return run_tunnel(url, cf_path, messages)
 
 
-def handle_tunnel_short(args, messages):
-    """Handle: nt u [-v4|-v6] <port>"""
+def handle_tunnel(args, messages):
+    """Handle: nt u|url [-v4|-v6] <port|url>
+
+    u and url are unified: auto-detects whether the argument is a
+    port number (int) or a full URL (contains '://').
+    """
     protocol = None
-    port_str = None
+    target = None
 
     for arg in args:
         if arg == '-v4':
             protocol = '4'
         elif arg == '-v6':
             protocol = '6'
-        elif not arg.startswith('-') and port_str is None:
-            port_str = arg
+        elif not arg.startswith('-') and target is None:
+            target = arg
         else:
             print(messages['unknown_arg'].format(arg))
             return 1
 
-    if port_str is None:
+    if target is None:
         print(messages['port_missing'])
         return 1
 
+    # URL mode: argument contains a scheme
+    if '://' in target:
+        return check_and_run_tunnel(target, messages)
+
+    # Port mode: parse as integer
     try:
-        port = int(port_str)
+        port = int(target)
     except ValueError:
         print(messages['port_invalid'])
         return 1
@@ -118,14 +129,6 @@ def handle_tunnel_short(args, messages):
         url = f'http://127.0.0.1:{port}'
 
     return check_and_run_tunnel(url, messages)
-
-
-def handle_tunnel_url(args, messages):
-    """Handle: nt url <url>"""
-    if not args:
-        print(messages['url_missing'])
-        return 1
-    return check_and_run_tunnel(args[0], messages)
 
 
 def handle_server(args, messages):
@@ -261,17 +264,52 @@ def handle_ports(messages):
     return 0
 
 
+def handle_kill(args, messages):
+    """Handle: nt kill [port] — kill process by port.
+
+    No port arg → interactive selection from listening ports.
+    Port arg    → kill directly.
+    """
+    if args:
+        try:
+            port = int(args[0])
+        except ValueError:
+            print(messages['port_invalid'])
+            return 1
+        return kill_process_by_port(port, messages)
+
+    return kill_interactive(messages)
+
+
 def main():
     messages = get_messages()
 
-    # No arguments -> show help
-    if len(sys.argv) == 1:
-        print_help(messages)
-        return 0
+    first_arg = None
+    args = []
 
-    first_arg = sys.argv[1]
+    if len(sys.argv) == 1:
+        # No arguments — try interactive mode, fallback to help
+        from nexus_terminal.interactive import run_interactive, HAS_MSVCRT, InteractiveExit
+        if HAS_MSVCRT:
+            config = ConfigManager()
+            custom = config.get_all_custom_commands()
+            try:
+                cmd = run_interactive(__version__, custom, messages)
+            except InteractiveExit:
+                # Ctrl+C — exit silently
+                return 0
+            if cmd:
+                parts = cmd.split()
+                first_arg = parts[0] if parts else None
+                args = parts[1:]
+        if first_arg is None:
+            print_help(messages)
+            return 0
+    else:
+        first_arg = sys.argv[1]
+        args = sys.argv[2:]
+
     mode = first_arg.lower()
-    args = sys.argv[2:]
 
     # Built-in modes (case-insensitive)
     if mode in ('help', 'h'):
@@ -282,11 +320,8 @@ def main():
         print(messages['version_info'].format(__version__))
         return 0
 
-    if mode == 'u':
-        return handle_tunnel_short(args, messages)
-
-    if mode == 'url':
-        return handle_tunnel_url(args, messages)
+    if mode in ('u', 'url'):
+        return handle_tunnel(args, messages)
 
     if mode in ('server', 's'):
         return handle_server(args, messages)
@@ -302,6 +337,9 @@ def main():
 
     if mode == 'ports':
         return handle_ports(messages)
+
+    if mode == 'kill':
+        return handle_kill(args, messages)
 
     # Not a built-in — try custom command (case-insensitive match)
     # Strip leading -- for backward compat
