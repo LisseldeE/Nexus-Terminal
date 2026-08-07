@@ -9,9 +9,17 @@ import tempfile
 import urllib.request
 import zipfile
 
-CF_DOWNLOAD_URL = "https://gitee.com/Lisselde_E/temp/releases/download/ALL/cloudflared.zip"
+from .i18n import detect_language
+
 CF_INSTALL_DIR = r"C:\Windows\System32"
 CF_EXE_NAME = "cloudflared.exe"
+
+
+def get_cf_download_url():
+    """Return the cloudflared download URL based on system language."""
+    if detect_language() == 'zh':
+        return "https://gitee.com/Lisselde_E/Nexus-Terminal/releases/download/plugins/cloudflared.zip"
+    return "https://github.com/LisseldeE/Nexus-Terminal/releases/download/plugins/cloudflared.zip"
 
 
 def check_cloudflared(cloudflared_path=None):
@@ -116,7 +124,8 @@ def download_and_extract_cf(messages=None):
     if messages:
         print(messages['cf_downloading'])
 
-    urllib.request.urlretrieve(CF_DOWNLOAD_URL, zip_path, _download_progress)
+    url = get_cf_download_url()
+    urllib.request.urlretrieve(url, zip_path, _download_progress)
 
     if messages:
         print(messages['cf_extracting'])

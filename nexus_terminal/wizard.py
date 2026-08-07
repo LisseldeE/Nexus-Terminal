@@ -5,7 +5,7 @@ import re
 from .config import ConfigManager
 
 # Prefixes reserved for built-in commands (used with -- prefix)
-RESERVED_PREFIXES = {'help', 'url', 'version', 'u', 'c', 'install', 'ip', 'server', 's', 'ports', 'kill', 'download'}
+RESERVED_PREFIXES = {'help', 'url', 'version', 'u', 'c', 'install', 'ip', 'server', 's', 'ports', 'kill', 'download', 'tool', 'renew'}
 
 # Valid prefix pattern: letters, numbers, hyphens, underscores
 PREFIX_PATTERN = re.compile(r'^[a-zA-Z0-9_-]+$')

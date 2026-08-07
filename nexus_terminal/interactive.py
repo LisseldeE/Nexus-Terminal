@@ -212,6 +212,8 @@ def _build_main_options(custom_commands, messages):
         ('ports', messages['cmd_desc_ports']),
         ('kill', messages['cmd_desc_kill']),
         ('download', messages['cmd_desc_download']),
+        ('tool', messages['cmd_desc_tool']),
+        ('renew', messages['cmd_desc_renew']),
         ('version', messages['cmd_desc_version']),
     ]
     options.append(('custom', messages['cmd_desc_custom']))
@@ -321,6 +323,11 @@ def _handle_download(messages):
     return f'download {url}'
 
 
+def _handle_tool(messages):
+    """Tool sub-flow: return 'tool' to let NT.py handle interactive selection."""
+    return 'tool'
+
+
 def run_interactive(version, custom_commands, messages):
     """Run the interactive command selector.
 
@@ -349,7 +356,8 @@ def run_interactive(version, custom_commands, messages):
 
     # Custom commands — execute directly
     simple_commands = {'url', 'server', 'custom', 'install',
-                       'ip', 'ports', 'kill', 'download', 'help', 'version', 'exit'}
+                       'ip', 'ports', 'kill', 'download', 'tool', 'renew',
+                       'help', 'version', 'exit'}
     if choice not in simple_commands:
         return choice
 
@@ -366,6 +374,8 @@ def run_interactive(version, custom_commands, messages):
         return _handle_install(messages)
     if choice == 'download':
         return _handle_download(messages)
+    if choice == 'tool':
+        return _handle_tool(messages)
 
     # Simple commands (ip, ports, help, version) — execute directly
     return choice

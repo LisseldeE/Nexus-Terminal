@@ -6,3 +6,4 @@ output/
 dist/
 
 *.exe
+*.bat

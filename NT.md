@@ -12,6 +12,9 @@
 | `nt c -ls` | 列出所有自定义命令 |
 | `nt c -rm <前缀>` | 删除自定义命令 |
 | `nt install cf` | 安装 cloudflared 到 System32（已安装则显示版本） |
+| `nt tool` | 系统工具集 |
+| `nt tool jurisdiction <current_user\|Everyone>` | 递归更改当前目录文件所有者为选定用户 |
+| `nt renew` | 检查更新（从远程仓库读取版本信息） |
 | `nt ip` | 显示本机 IP 地址 |
 | `nt ports` | 列出监听中的端口 |
 | `nt kill [port]` | 终止占用端口的进程（无参进入交互选择） |
@@ -35,6 +38,9 @@
 - `server` → 输入端口
 - `custom` → 创建 / 列表 / 删除
 - `install` → 选择安装组件
+- `download` → 输入下载地址
+- `tool` → 选择工具 (jurisdiction: 选择所有者 → 确认)
+- `renew` → 检查更新
 
 ### 示例
 
@@ -73,7 +79,7 @@ nt mytunnel             # 执行自定义命令
 }
 ```
 
-保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download`
+保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew`
 
 ---
 
@@ -93,6 +99,9 @@ A lightweight Python CLI tool for Cloudflare tunnels and custom command mapping.
 | `nt c -ls` | List all custom commands |
 | `nt c -rm <prefix>` | Remove a custom command |
 | `nt install cf` | Install cloudflared to System32 (shows version if already installed) |
+| `nt tool` | System tools |
+| `nt tool jurisdiction <current_user\|Everyone>` | Recursively change file owner in CWD to the selected user |
+| `nt renew` | Check for updates (fetches version info from remote repos) |
 | `nt ip` | Show local IP addresses |
 | `nt ports` | List listening ports |
 | `nt kill [port]` | Kill process by port (no arg = interactive) |
@@ -116,6 +125,9 @@ Supports multi-level menus:
 - `server` → input port
 - `custom` → create / list / remove
 - `install` → select component to install
+- `download` → input URL
+- `tool` → select tool (jurisdiction: select owner → confirm)
+- `renew` → check for updates
 
 ### Examples
 
@@ -154,4 +166,4 @@ Path: `~/.nexusterminal/config.json`
 }
 ```
 
-Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download`
+Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew`

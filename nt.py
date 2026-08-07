@@ -35,6 +35,8 @@ from nexus_terminal.network import get_network_info, format_network_info
 from nexus_terminal.ports import get_listening_ports, format_ports
 from nexus_terminal.kill import kill_process_by_port, kill_interactive
 from nexus_terminal.downloader import download_file
+from nexus_terminal.tool import handle_tool_command
+from nexus_terminal.renew import check_update
 
 
 def print_help(messages):
@@ -54,6 +56,8 @@ def print_help(messages):
     print(messages['help_ports'])
     print(messages['help_kill'])
     print(messages['help_download'])
+    print(messages['help_tool'])
+    print(messages['help_renew'])
     print(messages['help_help'])
     print(messages['help_version'])
     print(messages['help_custom'])
@@ -299,6 +303,11 @@ def handle_download(args, messages):
     return 0 if result else 1
 
 
+def handle_renew(messages):
+    """Handle: nt renew — check for updates."""
+    return check_update(messages)
+
+
 def main():
     messages = get_messages()
 
@@ -362,6 +371,12 @@ def main():
 
     if mode == 'download':
         return handle_download(args, messages)
+
+    if mode == 'tool':
+        return handle_tool_command(args, messages)
+
+    if mode == 'renew':
+        return handle_renew(messages)
 
     # Not a built-in — try custom command (case-insensitive match)
     # Strip leading -- for backward compat
