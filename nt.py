@@ -38,6 +38,7 @@ from nexus_terminal.downloader import download_file
 from nexus_terminal.tool import handle_tool_command
 from nexus_terminal.renew import check_update
 from nexus_terminal.monitor import monitor_process, monitor_interactive
+from nexus_terminal.hash import hash_file, hash_interactive
 
 
 def print_help(messages):
@@ -60,6 +61,7 @@ def print_help(messages):
     print(messages['help_tool'])
     print(messages['help_renew'])
     print(messages['help_monitor'])
+    print(messages['help_hash'])
     print(messages['help_help'])
     print(messages['help_version'])
     print(messages['help_custom'])
@@ -322,6 +324,13 @@ def handle_monitor(args, messages):
     return monitor_interactive(messages)
 
 
+def handle_hash(args, messages):
+    """Handle: nt hash [file] — calculate file hash (MD5/SHA1/SHA256)."""
+    if args:
+        return hash_file(args[0], messages)
+    return hash_interactive(messages)
+
+
 def main():
     messages = get_messages()
 
@@ -394,6 +403,9 @@ def main():
 
     if mode == 'monitor':
         return handle_monitor(args, messages)
+
+    if mode == 'hash':
+        return handle_hash(args, messages)
 
     # Not a built-in — try custom command (case-insensitive match)
     # Strip leading -- for backward compat

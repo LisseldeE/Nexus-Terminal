@@ -205,7 +205,7 @@ def prompt_input(label, messages):
 def _build_main_options(custom_commands, messages):
     """Build the main menu options list."""
     # Built-in commands sorted alphabetically
-    builtin_keys = ['download', 'install', 'ip', 'kill', 'monitor', 'ports',
+    builtin_keys = ['download', 'hash', 'install', 'ip', 'kill', 'monitor', 'ports',
                     'renew', 'server', 'tool', 'url', 'version']
     options = []
     for key in builtin_keys:
@@ -352,7 +352,7 @@ def run_interactive(version, custom_commands, messages):
     # Custom commands — execute directly
     simple_commands = {'url', 'server', 'custom', 'install',
                        'ip', 'ports', 'kill', 'download', 'monitor', 'tool', 'renew',
-                       'help', 'version', 'exit'}
+                       'hash', 'help', 'version', 'exit'}
     if choice not in simple_commands:
         return choice
 
