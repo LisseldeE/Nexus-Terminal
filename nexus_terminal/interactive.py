@@ -204,18 +204,13 @@ def prompt_input(label, messages):
 
 def _build_main_options(custom_commands, messages):
     """Build the main menu options list."""
-    options = [
-        ('url', messages['cmd_desc_url']),
-        ('server', messages['cmd_desc_server']),
-        ('install', messages['cmd_desc_install']),
-        ('ip', messages['cmd_desc_ip']),
-        ('ports', messages['cmd_desc_ports']),
-        ('kill', messages['cmd_desc_kill']),
-        ('download', messages['cmd_desc_download']),
-        ('tool', messages['cmd_desc_tool']),
-        ('renew', messages['cmd_desc_renew']),
-        ('version', messages['cmd_desc_version']),
-    ]
+    # Built-in commands sorted alphabetically
+    builtin_keys = ['download', 'install', 'ip', 'kill', 'monitor', 'ports',
+                    'renew', 'server', 'tool', 'url', 'version']
+    options = []
+    for key in builtin_keys:
+        desc_key = f'cmd_desc_{key}'
+        options.append((key, messages[desc_key]))
     options.append(('custom', messages['cmd_desc_custom']))
     for prefix, data in custom_commands.items():
         if isinstance(data, dict):
@@ -356,7 +351,7 @@ def run_interactive(version, custom_commands, messages):
 
     # Custom commands — execute directly
     simple_commands = {'url', 'server', 'custom', 'install',
-                       'ip', 'ports', 'kill', 'download', 'tool', 'renew',
+                       'ip', 'ports', 'kill', 'download', 'monitor', 'tool', 'renew',
                        'help', 'version', 'exit'}
     if choice not in simple_commands:
         return choice

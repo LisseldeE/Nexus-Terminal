@@ -19,6 +19,7 @@
 | `nt ports` | 列出监听中的端口 |
 | `nt kill [port]` | 终止占用端口的进程（无参进入交互选择） |
 | `nt download <url>` | 多线程下载文件到当前目录 |
+| `nt monitor [port]` | 实时监控端口进程 CPU、内存、网络等资源占用 |
 | `nt <前缀>` | 执行自定义命令 |
 | `nt help` | 显示帮助信息 |
 | `nt version` | 显示版本信息 |
@@ -39,6 +40,7 @@
 - `custom` → 创建 / 列表 / 删除
 - `install` → 选择安装组件
 - `download` → 输入下载地址
+- `monitor` → 选择端口 → 实时监控
 - `tool` → 选择工具 (jurisdiction: 选择所有者 → 确认)
 - `renew` → 检查更新
 
@@ -79,7 +81,7 @@ nt mytunnel             # 执行自定义命令
 }
 ```
 
-保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew`
+保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor`
 
 ---
 
@@ -106,6 +108,7 @@ A lightweight Python CLI tool for Cloudflare tunnels and custom command mapping.
 | `nt ports` | List listening ports |
 | `nt kill [port]` | Kill process by port (no arg = interactive) |
 | `nt download <url>` | Multi-threaded download to current directory |
+| `nt monitor [port]` | Real-time process monitoring (CPU, memory, network) |
 | `nt <prefix>` | Execute a custom command |
 | `nt help` | Show help |
 | `nt version` | Show version |
@@ -126,6 +129,7 @@ Supports multi-level menus:
 - `custom` → create / list / remove
 - `install` → select component to install
 - `download` → input URL
+- `monitor` → select port → real-time monitoring
 - `tool` → select tool (jurisdiction: select owner → confirm)
 - `renew` → check for updates
 
@@ -166,4 +170,4 @@ Path: `~/.nexusterminal/config.json`
 }
 ```
 
-Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew`
+Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor`

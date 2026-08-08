@@ -37,6 +37,7 @@ from nexus_terminal.kill import kill_process_by_port, kill_interactive
 from nexus_terminal.downloader import download_file
 from nexus_terminal.tool import handle_tool_command
 from nexus_terminal.renew import check_update
+from nexus_terminal.monitor import monitor_process, monitor_interactive
 
 
 def print_help(messages):
@@ -58,6 +59,7 @@ def print_help(messages):
     print(messages['help_download'])
     print(messages['help_tool'])
     print(messages['help_renew'])
+    print(messages['help_monitor'])
     print(messages['help_help'])
     print(messages['help_version'])
     print(messages['help_custom'])
@@ -308,6 +310,18 @@ def handle_renew(messages):
     return check_update(messages)
 
 
+def handle_monitor(args, messages):
+    """Handle: nt monitor [port] — real-time process monitoring."""
+    if args:
+        try:
+            port = int(args[0])
+        except ValueError:
+            print(messages['monitor_usage'])
+            return 1
+        return monitor_process(port, messages)
+    return monitor_interactive(messages)
+
+
 def main():
     messages = get_messages()
 
@@ -377,6 +391,9 @@ def main():
 
     if mode == 'renew':
         return handle_renew(messages)
+
+    if mode == 'monitor':
+        return handle_monitor(args, messages)
 
     # Not a built-in — try custom command (case-insensitive match)
     # Strip leading -- for backward compat
