@@ -32,6 +32,28 @@ Download `nt.exe` and place it in `C:\Windows\System32\`. The `nt` command will 
 
 ## Features
 
+### Quick Navigation
+- Interactive Mode
+- Network
+    - Tunnel (u / url)
+    - IP Query (ip)
+    - Route Trace (trace)
+- Process Management
+    - Port List (ports)
+    - Port Kill (kill)
+    - Process Monitor (monitor)
+- File
+    - File Server (server)
+    - File Download (download)
+    - File Hash (hash)
+- System
+    - Install (install)
+    - System Tools (tool)
+    - Check Update (renew)
+- Custom Commands (c)
+- Help (help)
+- Version (version)
+
 ### Tunnel Service
 - One-command Cloudflare tunnel setup to expose local ports instantly
 - IPv4/IPv6 protocol selection

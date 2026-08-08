@@ -206,7 +206,7 @@ def _build_main_options(custom_commands, messages):
     """Build the main menu options list."""
     # Built-in commands sorted alphabetically
     builtin_keys = ['download', 'hash', 'install', 'ip', 'kill', 'monitor', 'ports',
-                    'renew', 'server', 'tool', 'url', 'version']
+                    'renew', 'server', 'tool', 'trace', 'url', 'version']
     options = []
     for key in builtin_keys:
         desc_key = f'cmd_desc_{key}'
@@ -323,6 +323,14 @@ def _handle_tool(messages):
     return 'tool'
 
 
+def _handle_trace(messages):
+    """Trace sub-flow: input host/IP → return command string."""
+    host = prompt_input('Host/IP:', messages)
+    if host is None:
+        return None
+    return f'trace {host}'
+
+
 def run_interactive(version, custom_commands, messages):
     """Run the interactive command selector.
 
@@ -352,7 +360,7 @@ def run_interactive(version, custom_commands, messages):
     # Custom commands — execute directly
     simple_commands = {'url', 'server', 'custom', 'install',
                        'ip', 'ports', 'kill', 'download', 'monitor', 'tool', 'renew',
-                       'hash', 'help', 'version', 'exit'}
+                       'hash', 'trace', 'help', 'version', 'exit'}
     if choice not in simple_commands:
         return choice
 
@@ -371,6 +379,8 @@ def run_interactive(version, custom_commands, messages):
         return _handle_download(messages)
     if choice == 'tool':
         return _handle_tool(messages)
+    if choice == 'trace':
+        return _handle_trace(messages)
 
     # Simple commands (ip, ports, help, version) — execute directly
     return choice

@@ -5,7 +5,7 @@
 | 命令 | 说明 |
 |------|------|
 | `nt` | 无参数进入交互模式 |
-| `nt u <port\|url>` | 建立隧道（端口默认 IPv4: 127.0.0.1，或完整 URL） |
+| `nt u <url>` | 建立隧道（端口默认 IPv4: 127.0.0.1，或完整 URL） |
 | `nt u -v6 <port>` | 使用 IPv6 ([::1]) 暴露端口 |
 | `nt url <url>` | `u` 的别名，通过完整 URL 建立隧道 |
 | `nt server <port>` | 启动 HTTP 文件服务器（简写 `nt s`） |
@@ -21,6 +21,7 @@
 | `nt kill [port]` | 终止占用端口的进程（无参进入交互选择） |
 | `nt download <url>` | 多线程下载文件到当前目录 |
 | `nt hash [file]` | 计算文件哈希值 (MD5/SHA1/SHA256) |
+| `nt trace <host>` | 追踪到目标的路由路径 |
 | `nt monitor [port]` | 实时监控端口进程 CPU、内存、网络等资源占用 |
 | `nt <前缀>` | 执行自定义命令 |
 | `nt help` | 显示帮助信息 |
@@ -42,6 +43,7 @@
 - `install` → 选择安装组件
 - `download` → 输入下载地址
 - `hash` → 选择文件 → 显示哈希值
+- `trace` → 输入目标地址
 - `monitor` → 选择端口 → 实时监控
 - `tool` → 选择工具 (jurisdiction: 选择所有者 → 确认)
 - `renew` → 检查更新
@@ -83,20 +85,18 @@ nt mytunnel             # 执行自定义命令
 }
 ```
 
-保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor` `hash`
+保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor` `hash` `trace`
 
 ---
 
 # Nexus Terminal
-
-A lightweight Python CLI tool for Cloudflare tunnels and custom command mapping.
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
 | `nt` | No args enters interactive mode |
-| `nt u <port\|url>` | Create a tunnel (port defaults to IPv4 127.0.0.1, or full URL) |
+| `nt u <url>` | Create a tunnel (port defaults to IPv4 127.0.0.1, or full URL) |
 | `nt u -v6 <port>` | Use IPv6 ([::1]) |
 | `nt url <url>` | Alias of `u`, create a tunnel via full URL |
 | `nt server <port>` | Start HTTP file server (shorthand `nt s`) |
@@ -112,6 +112,7 @@ A lightweight Python CLI tool for Cloudflare tunnels and custom command mapping.
 | `nt kill [port]` | Kill process by port (no arg = interactive) |
 | `nt download <url>` | Multi-threaded download to current directory |
 | `nt hash [file]` | Calculate file hash (MD5/SHA1/SHA256) |
+| `nt trace <host>` | Trace route to a host |
 | `nt monitor [port]` | Real-time process monitoring (CPU, memory, network) |
 | `nt <prefix>` | Execute a custom command |
 | `nt help` | Show help |
@@ -133,6 +134,7 @@ Supports multi-level menus:
 - `install` → select component to install
 - `download` → input URL
 - `hash` → select file → show hash values
+- `trace` → input target address
 - `monitor` → select port → real-time monitoring
 - `tool` → select tool (jurisdiction: select owner → confirm)
 - `renew` → check for updates
@@ -174,4 +176,4 @@ Path: `~/.nexusterminal/config.json`
 }
 ```
 
-Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor`
+Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor` `hash` `trace`

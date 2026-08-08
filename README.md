@@ -32,6 +32,28 @@ Nexus Terminal 是一款基于 Python 的轻量级终端辅助工具，提供多
 
 ## 功能特性
 
+### 快速导航
+- 交互模式
+- 网络
+    - 隧道 (u / url)
+    - IP 查询 (ip)
+    - 路由追踪 (trace)
+- 进程管理
+    - 端口列表 (ports)
+    - 端口终止 (kill)
+    - 进程监控 (monitor)
+- 文件
+    - 文件服务器 (server)
+    - 文件下载 (download)
+    - 文件哈希 (hash)
+- 系统
+    - 安装 (install)
+    - 系统工具 (tool)
+    - 检查更新 (renew)
+- 自定义命令 (c)
+- 帮助 (help)
+- 版本 (version)
+
 ### 隧道服务
 - 一键建立 Cloudflare 隧道，快速暴露本地端口
 - 支持 IPv4/IPv6 协议选择
