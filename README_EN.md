@@ -26,6 +26,7 @@ No need to memorize complex command parameters. Whether through an intuitive int
 
 ## Download
 
+- **Gitee Releases**: https://gitee.com/Lisselde_E/Nexus-Terminal/releases
 - **GitHub Releases**: https://github.com/LisseldeE/Nexus-Terminal/releases
 
 Download `nt.exe` and place it in `C:\Windows\System32\`. The `nt` command will then be available from any terminal without any environment variable configuration.
@@ -97,26 +98,7 @@ Download `nt.exe` and place it in `C:\Windows\System32\`. The `nt` command will 
 
 ## Command List
 
-| Command | Description |
-|---------|-------------|
-| `nt` | Enter interactive mode |
-| `nt u <port\|url>` | Create a tunnel (default IPv4: 127.0.0.1, or full URL) |
-| `nt u -v6 <port>` | Use IPv6 ([::1]) |
-| `nt url <url>` | Alias of `u`, create a tunnel via full URL |
-| `nt server <port>` | Start HTTP file server (shorthand `nt s`) |
-| `nt c` | Enter custom command wizard |
-| `nt c -ls` | List all custom commands |
-| `nt c -rm <prefix>` | Remove a custom command |
-| `nt install cf` | Install cloudflared to System32 (shows version if already installed) |
-| `nt ip` | Show local IP addresses |
-| `nt ports` | List listening ports |
-| `nt kill [port]` | Kill process by port (no arg = interactive selection) |
-| `nt download <url>` | Multi-threaded download to current directory |
-| `nt tool` | Enter system tools |
-| `nt tool jurisdiction <current_user\|Everyone>` | Recursively change file owner in CWD to the selected user |
-| `nt <prefix>` | Execute a custom command |
-| `nt help` | Show help |
-| `nt version` | Show version |
+See [Command List](https://github.com/LisseldeE/Nexus-Terminal/blob/main/NT.md)
 
 ## Interactive Mode
 
@@ -150,60 +132,6 @@ Up/Down Navigate  Enter Confirm  Esc Cancel
 | **Esc** | Go back / Cancel |
 | **Ctrl+C** | Exit silently |
 
-### Multi-level Menus
-
-| Menu Item | Sub-flow |
-|-----------|----------|
-| `url` | Select protocol (IPv4/IPv6) → Enter port |
-| `server` | Enter port |
-| `custom` | Create / List / Remove |
-| `install` | Select component to install |
-| `kill` | Select a listening port's process to kill |
-| `download` | Enter download URL |
-| `tool` | Select tool (jurisdiction: select owner → confirm) |
-
-## Examples
-
-```bash
-# Interactive mode
-nt
-
-# Tunnels
-nt u 5000                     # Expose 127.0.0.1:5000
-nt u -v6 5000                 # Expose [::1]:5000
-nt u 5000 -v6                 # Sub-arg order is flexible
-nt U 5000                     # Case-insensitive
-nt u http://localhost:8080    # Tunnel via URL
-nt url http://localhost:8080  # Same as above
-
-# HTTP file server
-nt server 5000
-nt s 5000
-
-# Custom commands
-nt c                          # Create custom command
-nt c -ls                      # List custom commands
-nt c -rm mytunnel             # Remove custom command
-nt mytunnel                   # Execute custom command
-
-# Install cloudflared
-nt install cf
-
-# Network tools
-nt ip                         # Show local IP
-nt ports                      # List listening ports
-
-# Process management
-nt kill                       # Interactive kill
-nt kill 5000                  # Kill process on port 5000
-
-# File download
-nt download https://example.com/file.zip
-
-# System tools
-nt tool jurisdiction Everyone  # Recursively change owner to Everyone
-```
-
 ## Config
 
 Path: `~/.nexusterminal/config.json`
@@ -218,7 +146,7 @@ Path: `~/.nexusterminal/config.json`
 }
 ```
 
-Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool`
+Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor` `hash` `trace`
 
 ## Change Log
 
