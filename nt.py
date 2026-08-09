@@ -40,6 +40,7 @@ from nexus_terminal.renew import check_update
 from nexus_terminal.monitor import monitor_process, monitor_interactive
 from nexus_terminal.hash import hash_file, hash_interactive
 from nexus_terminal.trace import trace_route
+from nexus_terminal.hosts import handle_hosts
 
 
 def print_help(messages):
@@ -64,6 +65,7 @@ def print_help(messages):
     print(messages['help_monitor'])
     print(messages['help_hash'])
     print(messages['help_trace'])
+    print(messages['help_hosts'])
     print(messages['help_help'])
     print(messages['help_version'])
     print(messages['help_custom'])
@@ -419,6 +421,9 @@ def main():
 
     if mode == 'trace':
         return handle_trace(args, messages)
+
+    if mode == 'hosts':
+        return handle_hosts(args, messages)
 
     # Not a built-in — try custom command (case-insensitive match)
     # Strip leading -- for backward compat

@@ -59,7 +59,7 @@ def _get_key():
     return ch
 
 
-def select_option(title, subtitle, options, messages):
+def select_option(title, subtitle, options, messages, page_size=None):
     """Show a list of options for selection.
 
     Args:
@@ -67,6 +67,10 @@ def select_option(title, subtitle, options, messages):
         subtitle: Hint line (navigation instructions).
         options: List of (value, description) tuples.
         messages: i18n messages dict.
+        page_size: Optional max number of visible options. When the list
+            exceeds this, a sliding window centered on the selection is
+            rendered instead, keeping output within the terminal viewport
+            so cleanup is always reliable for very long lists.
 
     Returns:
         Selected value string, or None if cancelled.
@@ -91,7 +95,23 @@ def select_option(title, subtitle, options, messages):
         ]
 
         max_len = max(len(v) for v, _ in options) if options else 0
-        for i, (value, desc) in enumerate(options):
+
+        # Sliding window for long lists — keeps last_lines bounded so the
+        # relative-cursor cleanup never overflows the terminal viewport.
+        use_window = bool(page_size and len(options) > page_size)
+        if use_window:
+            half = page_size // 2
+            start = max(0, selected - half)
+            end = min(len(options), start + page_size)
+            start = max(0, end - page_size)
+        else:
+            start, end = 0, len(options)
+
+        if use_window and start > 0:
+            out.append(f'{C_GRAY}  ↑ {start}{C_RESET}')
+
+        for i in range(start, end):
+            value, desc = options[i]
             pad = ' ' * (max_len - len(value) + 2)
             if i == selected:
                 out.append(
@@ -100,6 +120,9 @@ def select_option(title, subtitle, options, messages):
                 )
             else:
                 out.append(f'  {value}{pad}{C_GRAY}{desc}{C_RESET}')
+
+        if use_window and end < len(options):
+            out.append(f'{C_GRAY}  ↓ {len(options) - end}{C_RESET}')
 
         out.append('')
 
@@ -138,12 +161,14 @@ def select_option(title, subtitle, options, messages):
         render()
 
 
-def prompt_input(label, messages):
+def prompt_input(label, messages, default=''):
     """Prompt for text input.
 
     Args:
         label: Prompt label shown above the input line.
         messages: i18n messages dict.
+        default: Optional pre-filled value (used by edit flows so the user
+            can press Enter to keep the current value).
 
     Returns:
         Input string, or None if cancelled (Esc).
@@ -153,7 +178,7 @@ def prompt_input(label, messages):
 
     _enable_vt_mode()
 
-    query = ''
+    query = default
     last_lines = 0
 
     def render():
@@ -205,7 +230,7 @@ def prompt_input(label, messages):
 def _build_main_options(custom_commands, messages):
     """Build the main menu options list."""
     # Built-in commands sorted alphabetically
-    builtin_keys = ['download', 'hash', 'install', 'ip', 'kill', 'monitor', 'ports',
+    builtin_keys = ['download', 'hash', 'hosts', 'install', 'ip', 'kill', 'monitor', 'ports',
                     'renew', 'server', 'tool', 'trace', 'url', 'version']
     options = []
     for key in builtin_keys:
@@ -331,6 +356,11 @@ def _handle_trace(messages):
     return f'trace {host}'
 
 
+def _handle_hosts(messages):
+    """Hosts sub-flow: return 'hosts' to let nt.py handle the sub-menu."""
+    return 'hosts'
+
+
 def run_interactive(version, custom_commands, messages):
     """Run the interactive command selector.
 
@@ -360,7 +390,7 @@ def run_interactive(version, custom_commands, messages):
     # Custom commands — execute directly
     simple_commands = {'url', 'server', 'custom', 'install',
                        'ip', 'ports', 'kill', 'download', 'monitor', 'tool', 'renew',
-                       'hash', 'trace', 'help', 'version', 'exit'}
+                       'hash', 'hosts', 'trace', 'help', 'version', 'exit'}
     if choice not in simple_commands:
         return choice
 
@@ -381,6 +411,8 @@ def run_interactive(version, custom_commands, messages):
         return _handle_tool(messages)
     if choice == 'trace':
         return _handle_trace(messages)
+    if choice == 'hosts':
+        return _handle_hosts(messages)
 
     # Simple commands (ip, ports, help, version) — execute directly
     return choice

@@ -22,6 +22,7 @@
 | `nt download <url>` | 多线程下载文件到当前目录 |
 | `nt hash [file]` | 计算文件哈希值 (MD5/SHA1/SHA256) |
 | `nt trace <host>` | 追踪到目标的路由路径 |
+| `nt hosts` | 管理 hosts 文件 (增/删/改/列出/记事本打开) |
 | `nt monitor [port]` | 实时监控端口进程 CPU、内存、网络等资源占用 |
 | `nt <前缀>` | 执行自定义命令 |
 | `nt help` | 显示帮助信息 |
@@ -44,6 +45,7 @@
 - `download` → 输入下载地址
 - `hash` → 选择文件 → 显示哈希值
 - `trace` → 输入目标地址
+- `hosts` → 选择操作 (增/删/改/列出/记事本打开)
 - `monitor` → 选择端口 → 实时监控
 - `tool` → 选择工具 (jurisdiction: 选择所有者 → 确认)
 - `renew` → 检查更新
@@ -68,6 +70,10 @@ nt ip                   # 显示本机 IP
 nt ports                # 列出监听端口
 nt kill                 # 交互选择进程终止
 nt kill 5000            # 终止占用 5000 端口的进程
+nt hosts                # 交互管理 hosts 文件
+nt hosts list           # 列出 hosts 条目
+nt hosts add 127.0.0.1 example.com  # 添加 hosts 条目
+nt hosts open           # 记事本打开 hosts (自动提权)
 nt mytunnel             # 执行自定义命令
 ```
 
@@ -85,7 +91,7 @@ nt mytunnel             # 执行自定义命令
 }
 ```
 
-保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor` `hash` `trace`
+保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor` `hash` `trace` `hosts`
 
 ---
 
@@ -113,6 +119,7 @@ nt mytunnel             # 执行自定义命令
 | `nt download <url>` | Multi-threaded download to current directory |
 | `nt hash [file]` | Calculate file hash (MD5/SHA1/SHA256) |
 | `nt trace <host>` | Trace route to a host |
+| `nt hosts` | Manage hosts file (add/del/edit/list/notepad) |
 | `nt monitor [port]` | Real-time process monitoring (CPU, memory, network) |
 | `nt <prefix>` | Execute a custom command |
 | `nt help` | Show help |
@@ -135,6 +142,7 @@ Supports multi-level menus:
 - `download` → input URL
 - `hash` → select file → show hash values
 - `trace` → input target address
+- `hosts` → select action (add/del/edit/list/notepad)
 - `monitor` → select port → real-time monitoring
 - `tool` → select tool (jurisdiction: select owner → confirm)
 - `renew` → check for updates
@@ -159,7 +167,11 @@ nt ip                   # Show local IP
 nt ports                # List listening ports
 nt kill                 # Interactive kill
 nt kill 5000            # Kill process on port 5000
-nt mytunnel             # Execute custom command
+nt hosts                # Interactive hosts management
+nt hosts list           # List hosts entries
+nt hosts add 127.0.0.1 example.com  # Add a hosts entry
+nt hosts open           # Open hosts in Notepad (auto-elevated)
+nt mytunnel             # Execute a custom command
 ```
 
 ### Config
@@ -176,4 +188,4 @@ Path: `~/.nexusterminal/config.json`
 }
 ```
 
-Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor` `hash` `trace`
+Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor` `hash` `trace` `hosts`
