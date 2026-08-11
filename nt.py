@@ -41,6 +41,9 @@ from nexus_terminal.monitor import monitor_process, monitor_interactive
 from nexus_terminal.hash import hash_file, hash_interactive
 from nexus_terminal.trace import trace_route
 from nexus_terminal.hosts import handle_hosts
+from nexus_terminal.dns import handle_dns
+from nexus_terminal.scan import handle_scan
+from nexus_terminal.http import handle_http
 
 
 def print_help(messages):
@@ -60,10 +63,13 @@ def print_help(messages):
     print(messages['help_ports'])
     print(messages['help_kill'])
     print(messages['help_download'])
+    print(messages['help_dns'])
     print(messages['help_tool'])
     print(messages['help_renew'])
+    print(messages['help_scan'])
     print(messages['help_monitor'])
     print(messages['help_hash'])
+    print(messages['help_http'])
     print(messages['help_trace'])
     print(messages['help_hosts'])
     print(messages['help_help'])
@@ -424,6 +430,15 @@ def main():
 
     if mode == 'hosts':
         return handle_hosts(args, messages)
+
+    if mode == 'dns':
+        return handle_dns(args, messages)
+
+    if mode == 'scan':
+        return handle_scan(args, messages)
+
+    if mode == 'http':
+        return handle_http(args, messages)
 
     # Not a built-in — try custom command (case-insensitive match)
     # Strip leading -- for backward compat

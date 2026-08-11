@@ -230,8 +230,8 @@ def prompt_input(label, messages, default=''):
 def _build_main_options(custom_commands, messages):
     """Build the main menu options list."""
     # Built-in commands sorted alphabetically
-    builtin_keys = ['download', 'hash', 'hosts', 'install', 'ip', 'kill', 'monitor', 'ports',
-                    'renew', 'server', 'tool', 'trace', 'url', 'version']
+    builtin_keys = ['dns', 'download', 'hash', 'hosts', 'http', 'install', 'ip', 'kill', 'monitor', 'ports',
+                    'renew', 'scan', 'server', 'tool', 'trace', 'url', 'version']
     options = []
     for key in builtin_keys:
         desc_key = f'cmd_desc_{key}'
@@ -361,6 +361,21 @@ def _handle_hosts(messages):
     return 'hosts'
 
 
+def _handle_dns(messages):
+    """DNS sub-flow: return 'dns' to let nt.py handle interactive input."""
+    return 'dns'
+
+
+def _handle_scan(messages):
+    """Scan sub-flow: return 'scan' to let nt.py handle the sub-menu."""
+    return 'scan'
+
+
+def _handle_http(messages):
+    """HTTP sub-flow: return 'http' to let nt.py handle interactive input."""
+    return 'http'
+
+
 def run_interactive(version, custom_commands, messages):
     """Run the interactive command selector.
 
@@ -390,7 +405,7 @@ def run_interactive(version, custom_commands, messages):
     # Custom commands — execute directly
     simple_commands = {'url', 'server', 'custom', 'install',
                        'ip', 'ports', 'kill', 'download', 'monitor', 'tool', 'renew',
-                       'hash', 'hosts', 'trace', 'help', 'version', 'exit'}
+                       'hash', 'hosts', 'http', 'dns', 'scan', 'trace', 'help', 'version', 'exit'}
     if choice not in simple_commands:
         return choice
 
@@ -413,6 +428,12 @@ def run_interactive(version, custom_commands, messages):
         return _handle_trace(messages)
     if choice == 'hosts':
         return _handle_hosts(messages)
+    if choice == 'dns':
+        return _handle_dns(messages)
+    if choice == 'scan':
+        return _handle_scan(messages)
+    if choice == 'http':
+        return _handle_http(messages)
 
     # Simple commands (ip, ports, help, version) — execute directly
     return choice

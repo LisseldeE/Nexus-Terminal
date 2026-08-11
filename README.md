@@ -39,6 +39,9 @@ Nexus Terminal 是一款基于 Python 的轻量级终端辅助工具，提供多
     - 隧道 (u / url)
     - IP 查询 (ip)
     - 路由追踪 (trace)
+    - DNS 查询 (dns)
+    - 端口扫描 (scan)
+    - HTTP 请求 (http)
 - 进程管理
     - 端口列表 (ports)
     - 端口终止 (kill)
@@ -48,6 +51,7 @@ Nexus Terminal 是一款基于 Python 的轻量级终端辅助工具，提供多
     - 文件下载 (download)
     - 文件哈希 (hash)
 - 系统
+    - hosts 管理 (hosts)
     - 安装 (install)
     - 系统工具 (tool)
     - 检查更新 (renew)

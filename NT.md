@@ -20,8 +20,11 @@
 | `nt ports` | 列出监听中的端口 |
 | `nt kill [port]` | 终止占用端口的进程（无参进入交互选择） |
 | `nt download <url>` | 多线程下载文件到当前目录 |
+| `nt dns <domain>` | 查询 DNS 记录 (A/AAAA/CNAME/MX/NS) |
 | `nt hash [file]` | 计算文件哈希值 (MD5/SHA1/SHA256) |
+| `nt http <url>` | 发送 HTTP GET 请求 (状态/耗时/头/正文预览) |
 | `nt trace <host>` | 追踪到目标的路由路径 |
+| `nt scan <host> [ports]` | 远程端口扫描 (常用端口或自定义) |
 | `nt hosts` | 管理 hosts 文件 (增/删/改/列出/记事本打开) |
 | `nt monitor [port]` | 实时监控端口进程 CPU、内存、网络等资源占用 |
 | `nt <前缀>` | 执行自定义命令 |
@@ -43,8 +46,11 @@
 - `custom` → 创建 / 列表 / 删除
 - `install` → 选择安装组件
 - `download` → 输入下载地址
+- `dns` → 输入域名或 IP → 显示 DNS 记录
 - `hash` → 选择文件 → 显示哈希值
+- `http` → 输入 URL → 显示 HTTP 响应详情
 - `trace` → 输入目标地址
+- `scan` → 输入目标主机 → 远程端口扫描
 - `hosts` → 选择操作 (增/删/改/列出/记事本打开)
 - `monitor` → 选择端口 → 实时监控
 - `tool` → 选择工具 (jurisdiction: 选择所有者 → 确认)
@@ -74,6 +80,10 @@ nt hosts                # 交互管理 hosts 文件
 nt hosts list           # 列出 hosts 条目
 nt hosts add 127.0.0.1 example.com  # 添加 hosts 条目
 nt hosts open           # 记事本打开 hosts (自动提权)
+nt dns google.com       # 查询 DNS 记录
+nt scan localhost       # 扫描本地常用端口
+nt scan 192.168.1.1 80,443,8080  # 扫描指定端口
+nt http httpbin.org/get  # 发送 HTTP GET 请求
 nt mytunnel             # 执行自定义命令
 ```
 
@@ -91,7 +101,7 @@ nt mytunnel             # 执行自定义命令
 }
 ```
 
-保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor` `hash` `trace` `hosts`
+保留前缀（不可用于自定义命令）：`help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `dns` `http` `tool` `renew` `scan` `monitor` `hash` `trace` `hosts`
 
 ---
 
@@ -117,8 +127,11 @@ nt mytunnel             # 执行自定义命令
 | `nt ports` | List listening ports |
 | `nt kill [port]` | Kill process by port (no arg = interactive) |
 | `nt download <url>` | Multi-threaded download to current directory |
+| `nt dns <domain>` | Query DNS records (A/AAAA/CNAME/MX/NS) |
 | `nt hash [file]` | Calculate file hash (MD5/SHA1/SHA256) |
+| `nt http <url>` | Send HTTP GET request (status/time/headers/body preview) |
 | `nt trace <host>` | Trace route to a host |
+| `nt scan <host> [ports]` | Remote port scan (common or custom ports) |
 | `nt hosts` | Manage hosts file (add/del/edit/list/notepad) |
 | `nt monitor [port]` | Real-time process monitoring (CPU, memory, network) |
 | `nt <prefix>` | Execute a custom command |
@@ -140,8 +153,11 @@ Supports multi-level menus:
 - `custom` → create / list / remove
 - `install` → select component to install
 - `download` → input URL
+- `dns` → input domain or IP → show DNS records
 - `hash` → select file → show hash values
+- `http` → input URL → show HTTP response details
 - `trace` → input target address
+- `scan` → input target host → remote port scan
 - `hosts` → select action (add/del/edit/list/notepad)
 - `monitor` → select port → real-time monitoring
 - `tool` → select tool (jurisdiction: select owner → confirm)
@@ -171,6 +187,10 @@ nt hosts                # Interactive hosts management
 nt hosts list           # List hosts entries
 nt hosts add 127.0.0.1 example.com  # Add a hosts entry
 nt hosts open           # Open hosts in Notepad (auto-elevated)
+nt dns google.com       # Query DNS records
+nt scan localhost       # Scan common ports on localhost
+nt scan 192.168.1.1 80,443,8080  # Scan specific ports
+nt http httpbin.org/get  # Send HTTP GET request
 nt mytunnel             # Execute a custom command
 ```
 
@@ -188,4 +208,4 @@ Path: `~/.nexusterminal/config.json`
 }
 ```
 
-Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `tool` `renew` `monitor` `hash` `trace` `hosts`
+Reserved prefixes: `help` `url` `version` `u` `c` `install` `ip` `server` `s` `ports` `kill` `download` `dns` `http` `tool` `renew` `scan` `monitor` `hash` `trace` `hosts`

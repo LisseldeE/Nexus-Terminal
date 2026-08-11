@@ -39,6 +39,9 @@ Download `nt.exe` and place it in `C:\Windows\System32\`. The `nt` command will 
     - Tunnel (u / url)
     - IP Query (ip)
     - Route Trace (trace)
+    - DNS Query (dns)
+    - Port Scan (scan)
+    - HTTP Request (http)
 - Process Management
     - Port List (ports)
     - Port Kill (kill)
@@ -48,6 +51,7 @@ Download `nt.exe` and place it in `C:\Windows\System32\`. The `nt` command will 
     - File Download (download)
     - File Hash (hash)
 - System
+    - Hosts Management (hosts)
     - Install (install)
     - System Tools (tool)
     - Check Update (renew)
