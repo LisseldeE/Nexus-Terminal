@@ -15,7 +15,7 @@ No need to memorize complex command parameters. Whether through an intuitive int
 
 ## Screenshots
 
-![Interface](https://lisseldee.github.io/images/webp/6-1.webp)
+![Interface](https://lisseldee.github.io/assets/images/webp/6-1.webp)
 
 ## Project Information
 

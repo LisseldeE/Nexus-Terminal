@@ -15,7 +15,7 @@ Nexus Terminal 是一款基于 Python 的轻量级终端辅助工具，提供多
 
 ## 项目截图
 
-![界面](https://lisseldee.github.io/images/webp/6-1.webp)
+![界面](https://lisseldee.github.io/assets/images/webp/6-1.webp)
 
 ## 项目信息
 
